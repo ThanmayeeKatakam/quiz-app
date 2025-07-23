@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Result</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container text-center mt-5">
+    <h2 class="mb-3">🎉 Quiz Completed</h2>
+    <p id="category-info" class="text-muted"></p>
+    <p id="score-text" class="lead"></p>
+
+    <!-- Pie chart with controlled size -->
+    <canvas id="resultChart" class="my-4" style="max-width: 300px; max-height: 300px; margin: auto;"></canvas>
+    
+    <div class="d-flex justify-content-center gap-3" id="action-buttons" style="display: none;">
+      <a href="review.html" class="btn btn-warning">Review Answers</a>
+      <a href="index.html" class="btn btn-primary">Retake Quiz</a>
+    </div>
+  </div>
+
+  <script>
+    const selectedCategory = localStorage.getItem("selectedCategory");
+    const quizReviewRaw = localStorage.getItem("quizReview");
+
+    if (!quizReviewRaw || !selectedCategory) {
+      document.getElementById("score-text").textContent = "Missing data. Please retake the quiz.";
+    } else {
+      const quizReview = JSON.parse(quizReviewRaw);
+
+      // Only show questions that belong to the selected category
+      //const filteredReview = quizReview.filter(q => q.category === selectedCategory || !q.category);
+
+      // const score = filteredReview.filter(q => q.selected === q.correct).length;
+      // const totalQuestions = filteredReview.length;
+      // const incorrect = totalQuestions - score;
+
+      const filteredReview = quizReview.filter(q => q.category === selectedCategory);
+      const score = filteredReview.filter(q => q.selected === q.correct).length;
+      const totalQuestions = filteredReview.length;
+      const incorrect = totalQuestions - score;
+
+      document.getElementById("category-info").textContent = `Subject: ${selectedCategory}`;
+      document.getElementById("score-text").textContent = `You scored ${score} out of ${totalQuestions}`;
+
+      if (totalQuestions > 0) {
+        const ctx = document.getElementById("resultChart").getContext("2d");
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: ['Correct', 'Incorrect'],
+            datasets: [{
+              data: [score, incorrect],
+              backgroundColor: ['#28a745', '#dc3545']
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        });
+
+        document.getElementById("action-buttons").style.display = "flex";
+      } else {
+        document.getElementById("score-text").textContent = `No questions found for "${selectedCategory}". Please check your quiz data.`;
+      }
+    }
+  </script>
+</body>
+</html>
