@@ -1,5 +1,5 @@
 # Quiz-App
-https://github.com/ThanmayeeKatakam/quiz-app.git
+https://thanmayeekatakam.github.io/quiz-app/
 This is a fully functional frontend-based Quiz Web Application built using HTML, CSS, and JavaScript. It allows users to:  
 ✏️ Take quizzes from different subject categories
 ⏱️ Answer with a timer for each question  
